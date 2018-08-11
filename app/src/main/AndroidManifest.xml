@@ -18,6 +18,5 @@
         </activity>
     </application>
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- // TODO: 位置情報取得、音声録音の機能を利用するための permission 設定を追加 -->
 </manifest>

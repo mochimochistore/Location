@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SpeechRecognitionListener {
-    //
+    // ログ出力用タグ名
     private static final String TAG = "MainActivity";
 
     // 位置情報取得処理用のパーミッションチェック処理で利用するリクエストコード
@@ -35,11 +35,11 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
     // 音声認識処理用のパーミッションチェック処理で利用するリクエストコード
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1001;
 
-    //
+    // 位置情報取得の成功・失敗を識別するためのフラグ
     private static final int HANDLER_OPERATION_SUCCESS = 0;
     private static final int HANDLER_OPERATION_FAILED = 1;
 
-    //
+    // 位置情報取得機能を提供するオブジェクト
     private FusedLocationProviderClient mFusedLocationClient;
 
     // 音声認識クラスのオブジェクト
@@ -48,12 +48,13 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
     // UI への処理実行を管理するハンドラ
     private Handler mHandler;
 
+    // 位置情報取得結果などを表示する TextView オブジェクト
     private TextView mTextLatitude;
     private TextView mTextLongitude;
     private TextView mTextErrorMessage;
     private TextView mTextSpeech;
 
-    @SuppressLint("HandlerLeak")
+    @SuppressLint("HandlerLeak") // Handler のメモリリーク警告を表示させないための設定
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,57 +62,8 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
 
         // 位置情報処理で利用するパーミッションが有効になっているかどうかをチェックする
         checkAccessLocationPermission(this);
-        //
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        // 音声認識処理用クラスのインスタンス生成
-        mySpeechRecognizer = new MySpeechRecognizer(this, this);
-
-        //
-        ImageButton buttonSpeech = (ImageButton) findViewById(R.id.button_speech);
-        buttonSpeech.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Speech button did click.");
-
-                //
-                mTextLatitude.setText("");
-                mTextLongitude.setText("");
-                mTextErrorMessage.setText("");
-                mTextSpeech.setText("・・・");
-
-                //
-                mySpeechRecognizer.start();
-                //getLocation();
-            }
-        });
-
-        //
-        mTextLatitude = (TextView)findViewById(R.id.latitude);
-        mTextLatitude.setText("");
-        mTextLongitude = (TextView)findViewById(R.id.longitude);
-        mTextLongitude.setText("");
-        mTextErrorMessage = (TextView)findViewById(R.id.error_message);
-        mTextErrorMessage.setText("");
-        mTextSpeech = (TextView)findViewById(R.id.speech);
-        mTextSpeech.setText("");
-
-        //
-        mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                if (msg.what == HANDLER_OPERATION_SUCCESS) {
-                    Location location = (Location) msg.obj;
-
-                    mTextLatitude.setText("緯度：" + location.getLatitude());
-                    mTextLongitude.setText("経度：" + location.getLongitude());
-
-                } else {
-                    String message = (String)msg.obj;
-                    mTextErrorMessage.setText(message);
-                }
-            }
-        };
+        // TODO: フィールドの初期化と、位置情報取得時に呼び出されるハンドルメソッドの定義
     }
 
     /**
@@ -120,36 +72,7 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
      */
     @Override
     public void onResults(List<String> results) {
-        // 音声認識結果を識別するための単語のリスト
-        final List<String> patterns = Arrays.asList("どこ", "ドコ");
-
-        // 音声認識結果が空の場合は何もしない
-        if (results.isEmpty()) {
-            mTextErrorMessage.setText("音声が認識できませんでした。");
-            return;
-        }
-        // 音声認識結果のリストの先頭の要素を取得
-        String result = results.get(0);
-        if (result == null) {
-            mTextErrorMessage.setText("音声が認識できませんでした。");
-            return;
-        }
-        Log.v(TAG, "result = " + result);
-
-        // 音声認識結果に「どこ」などが含まれているかどうかをチェック
-        for (String pattern : patterns) {
-            if (result.contains(pattern)) {
-                mTextSpeech.setText(result);
-
-                //
-                getLocation();
-                return;
-            }
-        }
-
-        // いずれにもマッチしなかった場合
-        mTextSpeech.setText(result);
-        mTextErrorMessage.setText("コマンドが見つかりませんでした。");
+        // TODO: 音声認識結果を解析して、位置情報の計測を開始する
     }
 
     /**
@@ -168,48 +91,16 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // 位置情報取得のパーミッション確認後、
+                // 位置情報取得のパーミッション確認後、続けて、
                 // 音声認識処理で利用するパーミッションが有効になっているかどうかをチェックする
                 checkSpeechRecognitionPermission(this);
             }
         }
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission") // Permission 関連の警告を非表示にするための設定
     private void getLocation() {
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        Log.d(TAG, "FusedLocationClient Success.");
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            //
-                            mHandler.sendMessage(Message.obtain(mHandler, HANDLER_OPERATION_SUCCESS, location));
-
-                        } else {
-                            //
-                            mHandler.sendMessage(Message.obtain(mHandler, HANDLER_OPERATION_FAILED, "位置情報の取得に失敗しました。"));
-                        }
-                    }
-                })
-                .addOnCanceledListener(this, new OnCanceledListener() {
-                    @Override
-                    public void onCanceled() {
-                        Log.d(TAG, "FusedLocationClient Canceled.");
-                        //
-                        mHandler.sendMessage(Message.obtain(mHandler, HANDLER_OPERATION_FAILED, "位置情報の取得をキャンセルしました。"));
-                    }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "FusedLocationClient Failure.");
-                        //
-                        mHandler.sendMessage(Message.obtain(mHandler, HANDLER_OPERATION_FAILED,
-                                "位置情報の取得に失敗しました。 （" + e.getLocalizedMessage() + "）"));
-                    }
-                });
+        // TODO: 位置情報取得を実行し、その成功・失敗時の処理を定義する
     }
 
     // 位置情報取得処理で利用するパーミッションが有効になっているかどうかをチェックする
