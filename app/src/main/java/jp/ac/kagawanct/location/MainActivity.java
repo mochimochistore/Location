@@ -103,8 +103,8 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
                 if (msg.what == HANDLER_OPERATION_SUCCESS) {
                     Location location = (Location) msg.obj;
 
-                    mTextLatitude.setText("緯度：" + location.getLatitude());
-                    mTextLongitude.setText("経度：" + location.getLongitude());
+                    mTextLatitude.setText(getString(R.string.latitude_title) + location.getLatitude());
+                    mTextLongitude.setText(getString(R.string.longitude_title) + location.getLongitude());
 
                 } else {
                     String message = (String)msg.obj;
@@ -125,16 +125,16 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
 
         // 音声認識結果が空の場合は何もしない
         if (results.isEmpty()) {
-            mTextErrorMessage.setText("音声が認識できませんでした。");
+            mTextErrorMessage.setText(R.string.voice_recognition_failed);
             return;
         }
         // 音声認識結果のリストの先頭の要素を取得
         String result = results.get(0);
         if (result == null) {
-            mTextErrorMessage.setText("音声が認識できませんでした。");
+            mTextErrorMessage.setText(R.string.voice_recognition_failed);
             return;
         }
-        Log.v(TAG, "result = " + result);
+        Log.d(TAG, "result = " + result);
 
         // 音声認識結果に「どこ」などが含まれているかどうかをチェック
         for (String pattern : patterns) {
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
 
         // いずれにもマッチしなかった場合
         mTextSpeech.setText(result);
-        mTextErrorMessage.setText("コマンドが見つかりませんでした。");
+        mTextErrorMessage.setText(R.string.voice_command_not_found);
     }
 
     /**
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
     @Override
     public void onError(int code) {
         mTextSpeech.setText("");
-        mTextErrorMessage.setText("音声が認識できませんでした。（エラーコード：" + code + "）");
+        mTextErrorMessage.setText(getString(R.string.voice_recognition_failed_with_error) + code);
     }
 
     // requestPermissions の結果を受け取る
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
 
                         } else {
                             //
-                            mHandler.sendMessage(Message.obtain(mHandler, HANDLER_OPERATION_FAILED, "位置情報の取得に失敗しました。"));
+                            mHandler.sendMessage(Message.obtain(mHandler, HANDLER_OPERATION_FAILED, getString(R.string.get_location_failed)));
                         }
                     }
                 })
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
                     public void onCanceled() {
                         Log.d(TAG, "FusedLocationClient Canceled.");
                         //
-                        mHandler.sendMessage(Message.obtain(mHandler, HANDLER_OPERATION_FAILED, "位置情報の取得をキャンセルしました。"));
+                        mHandler.sendMessage(Message.obtain(mHandler, HANDLER_OPERATION_FAILED, getString(R.string.get_location_canceled)));
                     }
                 })
                 .addOnFailureListener(this, new OnFailureListener() {
@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
                         Log.w(TAG, "FusedLocationClient Failure.");
                         //
                         mHandler.sendMessage(Message.obtain(mHandler, HANDLER_OPERATION_FAILED,
-                                "位置情報の取得に失敗しました。 （" + e.getLocalizedMessage() + "）"));
+                                getString(R.string.get_location_failed_with_error) + e.getLocalizedMessage()));
                     }
                 });
     }
