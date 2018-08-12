@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Location</string>
+    <string name="latitude_title">緯度：</string>
+    <string name="longitude_title">経度：</string>
+    <string name="voice_recognition_failed">音声が認識できませんでした。</string>
+    <string name="voice_command_not_found">コマンドが見つかりませんでした。</string>
+    <string name="voice_recognition_failed_with_error">音声が認識できませんでした。エラーコード：</string>
+    <string name="get_location_failed">位置情報の取得に失敗しました。</string>
+    <string name="get_location_canceled">位置情報の取得をキャンセルしました。</string>
+    <string name="get_location_failed_with_error">位置情報の取得に失敗しました。エラーメッセージ：</string>
 </resources>

@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
     @Override
     public void onError(int code) {
         mTextSpeech.setText("");
-        mTextErrorMessage.setText("音声が認識できませんでした。（エラーコード：" + code + "）");
+        mTextErrorMessage.setText(getString(R.string.voice_recognition_failed_with_error) + code);
     }
 
     // requestPermissions の結果を受け取る
