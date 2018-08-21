@@ -63,7 +63,20 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
         // 位置情報処理で利用するパーミッションが有効になっているかどうかをチェックする
         checkAccessLocationPermission(this);
 
-        // TODO: フィールドの初期化と、位置情報取得時に呼び出されるハンドルメソッドの定義
+        // TODO: フィールドの初期化
+
+        // 位置情報取得結果などを表示する TextView オブジェクトを取得し、初期化
+        mTextLatitude = (TextView)findViewById(R.id.latitude);
+        mTextLatitude.setText("");
+        mTextLongitude = (TextView)findViewById(R.id.longitude);
+        mTextLongitude.setText("");
+        mTextErrorMessage = (TextView)findViewById(R.id.error_message);
+        mTextErrorMessage.setText("");
+        mTextSpeech = (TextView)findViewById(R.id.speech);
+        mTextSpeech.setText("");
+
+        // TODO: 位置情報取得時に呼び出されるハンドルメソッドの定義
+
     }
 
     /**
@@ -72,7 +85,24 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
      */
     @Override
     public void onResults(List<String> results) {
+        // 音声認識結果が空の場合は何もしない
+        if (results.isEmpty()) {
+            mTextErrorMessage.setText(R.string.voice_recognition_failed);
+            return;
+        }
+        // 音声認識結果のリストの先頭の要素を取得
+        String result = results.get(0);
+        if (result == null) {
+            mTextErrorMessage.setText(R.string.voice_recognition_failed);
+            return;
+        }
+        Log.d(TAG, "result = " + result);
+
         // TODO: 音声認識結果を解析して、位置情報の計測を開始する
+
+        // いずれにもマッチしなかった場合
+        mTextSpeech.setText(result);
+        mTextErrorMessage.setText(R.string.voice_command_not_found);
     }
 
     /**
