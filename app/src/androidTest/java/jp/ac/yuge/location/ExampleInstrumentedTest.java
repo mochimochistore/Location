@@ -1,4 +1,4 @@
-package jp.ac.kagawanct.location;
+package jp.ac.yuge.location;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("jp.ac.kagawanct.location", appContext.getPackageName());
+        assertEquals("jp.ac.yuge.location", appContext.getPackageName());
     }
 }

@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "jp.ac.kagawanct.location"
+        applicationId "jp.ac.yuge.location"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1

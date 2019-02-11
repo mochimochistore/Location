@@ -1,4 +1,4 @@
-package jp.ac.kagawanct.location;
+package jp.ac.yuge.location;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
